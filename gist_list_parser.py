@@ -18,6 +18,12 @@ class GistInfo(NamedTuple):
     access : str
     last_update : datetime
 
+    def __str__(self):
+        return f"{self.last_update:%b %d, %Y %I:%M:%S %p} ({self.access}) " \
+               f"{self.file_count}\n{self.hash:<32}\n" \
+               f"{self.descr}\n"
+
+
 GIST_RE : re.Pattern = re.compile(r"(?P<hash>[a-f0-9]+)\t"
                          r"(?P<descr>.*)\t" 
                          r"(?P<file_count>\d+\sfiles?)\t"
@@ -37,13 +43,6 @@ def read_gist_list(filename: str) -> list[str]:
 def parse_date_time_string(date_time_string: str) -> datetime:
     return datetime.strptime(date_time_string, "%Y-%m-%dT%H:%M:%SZ")
 
-def GistInfo_str(self : GistInfo) -> str:
-    return f"{self.last_update:%b %d, %Y %I:%M:%S %p} ({self.access}) " \
-           f"{self.file_count}\n{self.hash:<32}\n" \
-           f"{self.descr}\n"
-
-GistInfo.__str__ = GistInfo_str # type:ignore 
-    
 def parse_gist_line(line : str) -> GistInfo:
     m = GIST_RE.search(line)
     if m:
